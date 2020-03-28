@@ -67,13 +67,15 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:id="@+id/result"
+            android:padding="20sp"/>
+
 
     </LinearLayout>
-
-
-
-
-
 
 
 </LinearLayout>
