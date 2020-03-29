@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -85,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
                         double latitude = city.getJSONArray("center").getDouble(1);
 
                         mtext.append(name + "  :  " + longitude + "  ,  " + latitude + "\n\n");
+
+                        new StorageManager().writeOnMemory(MainActivity.this,
+                                Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                                "city.json",
+                                response.toString());
+                        new StorageManager().readFromMemory(MainActivity.this,
+                                Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                                "city.json");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class StorageManager {
 
-    public void writeOnMemory(Context context, String fileDirectory, String fileName, String fileBody) {
+    public boolean writeOnMemory(Context context, String fileDirectory, String fileName, String fileBody) {
         try {
             File root = new File(fileDirectory);
             if (!root.exists()) {
@@ -23,12 +23,15 @@ public class StorageManager {
             writer.append(fileBody);
             writer.flush();
             writer.close();
-            Log.i("SaveFileCompletedTag", "file saved");
+            Log.i("SaveFileCompletedTag", fileName + " file saved in" + fileDirectory);
 //            Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
+
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
 //            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             Log.i("SaveFileErrorTag", e.toString());
+            return false;
         }
     }
 
@@ -44,12 +47,14 @@ public class StorageManager {
             in = new BufferedReader(fileReader);
             while ((line = in.readLine()) != null) stringBuilder.append(line);
 
-            Log.i("ReadFileCompletedTag", "reading file completed successfully");
+            Log.i("ReadFileCompletedTag", "reading file from " + fileDirectory + " completed successfully");
 
         } catch (FileNotFoundException e) {
             Log.i("ReadFileErrorTag", e.toString());
+            return "Error";
         } catch (IOException e) {
             Log.i("ReadFileErrorTag", e.toString());
+            return "Error";
         }
         return stringBuilder.toString();
     }
