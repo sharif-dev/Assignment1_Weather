@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (validateCity()) {
                         startActivity(new Intent(MainActivity.this, WeatherActivity.class));
-//                        sendRequest();
+                        sendRequest();
                     }
                 }
             });
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendRequest(){
-        String cityName = "newyork";
+        String cityName = "tehran";
         final String accessToken = "access_token=pk.eyJ1Ijoic2VjdGlvbjE5OTEiLCJhIjoiY2s4MWRpNWoyMG9mZDNkcnVrYnc5cWI4OCJ9.1GiZajLOALly-iYcGgKaUQ";
         String url =  "https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?" + accessToken;
         url = url.replace("{query}", cityName);
