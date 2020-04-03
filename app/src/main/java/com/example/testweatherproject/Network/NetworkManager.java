@@ -1,4 +1,4 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.Network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

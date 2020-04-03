@@ -1,4 +1,4 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.Network;
 
 import org.json.JSONObject;
 
