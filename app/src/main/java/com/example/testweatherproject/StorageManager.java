@@ -3,6 +3,10 @@ package com.example.testweatherproject;
 import android.content.Context;
 import android.util.Log;
 
+
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +16,9 @@ import java.io.IOException;
 
 public class StorageManager {
 
-    public boolean writeOnMemory(Context context, String fileDirectory, String fileName, String fileBody) {
+    public boolean writeOnMemory(String fileDirectory, String fileName, JSONObject jsonObject) {
         try {
+            String fileBody = jsonObject.toString();
             File root = new File(fileDirectory);
             if (!root.exists()) {
                 root.mkdirs();
@@ -36,26 +41,27 @@ public class StorageManager {
     }
 
 
-    public String readFromMemory(Context context,String fileDirectory, String fileName) {
+    public String readFromMemory (String fileDirectory, String fileName) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String line;
         BufferedReader in = null;
-        try {
-            File jsonFile = new File(fileDirectory, fileName);
-            FileReader fileReader = new FileReader(jsonFile);
 
-            in = new BufferedReader(fileReader);
-            while ((line = in.readLine()) != null) stringBuilder.append(line);
+        File jsonFile = new File(fileDirectory, fileName);
+        FileReader fileReader = new FileReader(jsonFile);
 
-            Log.i("ReadFileCompletedTag", "reading file from " + fileDirectory + " completed successfully");
+        in = new BufferedReader(fileReader);
+        while ((line = in.readLine()) != null) stringBuilder.append(line);
 
-        } catch (FileNotFoundException e) {
-            Log.i("ReadFileErrorTag", e.toString());
-            return "Error";
-        } catch (IOException e) {
-            Log.i("ReadFileErrorTag", e.toString());
-            return "Error";
-        }
+
+
+        Log.i("ReadFileCompletedTag", "reading file from " + fileDirectory + " completed successfully");
+
         return stringBuilder.toString();
+    }
+
+    public boolean deleteFromMemory (String fileDirectory, String fileName){
+
+        File file = new File(fileDirectory, fileName);
+        return file.delete();
     }
 }

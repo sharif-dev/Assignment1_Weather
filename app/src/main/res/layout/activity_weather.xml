@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".MainActivity"
-android:orientation="vertical"
-android:background="@color/darkTheme"
-android:gravity="center"
-android:paddingTop="20dp"
-android:paddingBottom="50dp"
-android:paddingLeft="15dp"
-android:paddingRight="15dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:background="@color/darkTheme"
+    android:gravity="center"
+    android:paddingTop="20dp"
+    android:paddingBottom="50dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
 
 
     <LinearLayout
@@ -22,147 +22,16 @@ android:paddingRight="15dp">
         android:layout_marginBottom="15dp"
         android:padding="5dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            tools:ignore="NestedWeights">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Isfahan"
-                android:textSize="40sp"
-                android:textColor="@color/lightTheme">
-
-            </TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/button_background"
-            android:orientation="vertical"
-            android:padding="5dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:paddingBottom="5dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/wind">
-
-                </ImageView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:paddingRight="2dp"
-                    tools:ignore="NestedWeights"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/up"
-                        >
-
-                    </ImageView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:layout_marginEnd="5dp"
-                    tools:ignore="NestedWeights"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="15°"
-                        android:textSize="15sp"
-                        >
-
-                    </TextView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:paddingRight="2dp"
-                    tools:ignore="NestedWeights"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/down">
-
-                    </ImageView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    tools:ignore="NestedWeights"
-                    android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15°"
-                            android:textSize="15sp">
-
-                        </TextView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    tools:ignore="NestedWeights"
-                    android:gravity="end">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/exclamation">
-
-                    </ImageView>
 
 
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:textSize="40sp"
+            android:textColor="@color/lightTheme">
+        </TextView>
 
     </LinearLayout>
 
@@ -182,6 +51,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_one_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -231,12 +101,13 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_one_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
                         android:textSize="15sp"
                         >
-                        
+
                     </TextView>
 
                 </LinearLayout>
@@ -273,6 +144,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_one_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -296,6 +168,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_one_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -312,6 +185,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_one_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -340,6 +214,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_two_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -389,6 +264,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_two_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -431,6 +307,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_two_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -454,6 +331,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_two_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -470,6 +348,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_two_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -498,6 +377,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_three_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -547,6 +427,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_three_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -589,6 +470,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_three_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -612,6 +494,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_three_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -628,6 +511,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_three_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -656,6 +540,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_four_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -705,6 +590,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_four_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -747,6 +633,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_four_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -770,6 +657,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_four_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -786,6 +674,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_four_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -814,6 +703,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_five_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -863,6 +753,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_five_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -905,6 +796,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_five_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -928,6 +820,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_five_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -944,6 +837,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_five_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -972,6 +866,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_six_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -1021,6 +916,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_six_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -1063,6 +959,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_six_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -1086,6 +983,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_six_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -1102,6 +1000,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_six_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"
@@ -1130,6 +1029,7 @@ android:paddingRight="15dp">
             android:gravity="center">
 
             <TextView
+                android:id="@+id/day_seven_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sunday"
@@ -1179,6 +1079,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_seven_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -1221,6 +1122,7 @@ android:paddingRight="15dp">
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/day_seven_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="15°"
@@ -1244,6 +1146,7 @@ android:paddingRight="15dp">
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/day_seven_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/cloudy">
@@ -1260,6 +1163,7 @@ android:paddingRight="15dp">
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/day_seven_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exclamation"

@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#13094E</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="darkTheme">#13094E</color>
-    <color name="lightTheme">#309AAD</color>
-    <color name="pressTheme">#0DCBEE</color>
+    <color name="lightTheme">#36CDE8</color>
+    <color name="pressTheme">#2990A3</color>
 </resources>
