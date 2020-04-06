@@ -1,8 +1,8 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.classes;
 
 import org.json.JSONObject;
 
-class City {
+public class City {
     private static City instance = null;
     private String cityName;
     private Double longitude;

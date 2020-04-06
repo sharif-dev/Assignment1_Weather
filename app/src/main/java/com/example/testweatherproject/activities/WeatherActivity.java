@@ -1,4 +1,4 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.testweatherproject.classes.City;
+import com.example.testweatherproject.classes.CustomToast;
+import com.example.testweatherproject.interfaces.ErrorListener;
+import com.example.testweatherproject.classes.NetworkManager;
+import com.example.testweatherproject.R;
+import com.example.testweatherproject.interfaces.ResponseListener;
+import com.example.testweatherproject.classes.StorageManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,7 +97,6 @@ public class WeatherActivity extends AppCompatActivity {
         dialog = builder.create();
         dialog.show();
 
-
         cityName = findViewById(R.id.city_name);
 
         dayOneText = findViewById(R.id.day_one_text);
@@ -138,6 +145,31 @@ public class WeatherActivity extends AppCompatActivity {
         sendWeatherRequest(city.getLongitude(), city.getLatitude());
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        City city = City.getInstance();
+        city.setJsonObject(new JSONObject());
+        city.setCityName(new String());
+        city.setLongitude(new Double(0));
+        city.setLatitude(new Double(0));
+
+        Log.i("CompleteLevelsTag","city object nulled in on destroy");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        City city = City.getInstance();
+        city.setJsonObject(new JSONObject());
+        city.setCityName(new String());
+        city.setLongitude(new Double(0));
+        city.setLatitude(new Double(0));
+
+        Log.i("CompleteLevelsTag","city object nulled in on stop");
+    }
 
     private Thread setComponents = new Thread(new Runnable() {
         @SuppressLint("SetTextI18n")
@@ -195,7 +227,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDayOneObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDayOneObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -211,7 +243,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDayTwoObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDayTwoObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -227,7 +259,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDayThreeObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDayThreeObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -243,7 +275,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDayFourObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDayFourObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -259,7 +291,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDayFiveObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDayFiveObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -275,7 +307,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDaySixObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDaySixObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -291,7 +323,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            Toast.makeText(WeatherActivity.this, finalDaySevenObject.getString("summary"), Toast.LENGTH_LONG).show();
+                            new CustomToast().toast(WeatherActivity.this, finalDaySevenObject.getString("summary"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -303,7 +335,6 @@ public class WeatherActivity extends AppCompatActivity {
 
                 }
             });
-
 
             Log.i("CompleteLevelsTag","components set");
 
@@ -400,30 +431,41 @@ public class WeatherActivity extends AppCompatActivity {
         url = url.replace("{longitude}", Double.toString(longitude));
         url = url.replace("{latitude}", Double.toString(latitude));
 
-        networkManager.sendRequest(url, new ResponseListener() {
-            @Override
-            public void onResult(JSONObject response) {
-                new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
-                        "weather.json",
-                        response);
-                City.getInstance().setJsonObject(response);
+        if(!NetworkManager.isNetworkAvailable(this)){
+            new CustomToast().toast(WeatherActivity.this, "You are offline");
+        }
+        else {
+            networkManager.sendRequest(url, new ResponseListener() {
+                @Override
+                public void onResult(JSONObject response) {
+                    new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                            "weather.json",
+                            response);
 
-                Log.i("CompleteLevelsTag","weather file saved and city json object set");
+                    Log.i("CompleteLevelsTag","weather file saved and city json object set response = " + response.toString());
+                    City.getInstance().setJsonObject(response);
 
-                Message msg = sendWeatherRequestHandler.obtainMessage();
-                Bundle bundle = new Bundle();
-                bundle.putString(doneMessageKey, doneMessageValue);
-                msg.setData(bundle);
-                sendWeatherRequestHandler.sendMessage(msg);
 
-                Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
 
-            }
-        }, new ErrorListener() {
-            @Override
-            public void onError() {
-                Toast.makeText(WeatherActivity.this, "GETS ERROR", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    Message msg = sendWeatherRequestHandler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(doneMessageKey, doneMessageValue);
+                    msg.setData(bundle);
+                    sendWeatherRequestHandler.sendMessage(msg);
+
+//                    dialog.dismiss();
+                    Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
+
+                }
+            }, new ErrorListener() {
+                @Override
+                public void onError() {
+                    new CustomToast().toast(WeatherActivity.this, "weather download gets error");
+                }
+            });
+
+
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.classes;
 
 import android.content.Context;
 import android.util.Log;

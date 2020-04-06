@@ -1,4 +1,4 @@
-package com.example.testweatherproject;
+package com.example.testweatherproject.classes;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -10,6 +10,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.testweatherproject.interfaces.ErrorListener;
+import com.example.testweatherproject.interfaces.ResponseListener;
 
 import org.json.JSONObject;
 
