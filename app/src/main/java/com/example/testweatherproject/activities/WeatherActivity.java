@@ -12,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 public class WeatherActivity extends AppCompatActivity {
@@ -96,6 +98,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         dialog = builder.create();
         dialog.show();
+
 
         cityName = findViewById(R.id.city_name);
 
@@ -179,9 +182,8 @@ public class WeatherActivity extends AppCompatActivity {
                 @Override
                 public void run() {
             City city = City.getInstance();
-            cityName.setText(city.getCityName());
 
-            JSONObject mainObject;
+            JSONObject mainObject = new JSONObject();
             JSONObject dayOneObject = new JSONObject();
             JSONObject dayTwoObject = new JSONObject();
             JSONObject dayThreeObject = new JSONObject();
@@ -190,7 +192,6 @@ public class WeatherActivity extends AppCompatActivity {
             JSONObject daySixObject = new JSONObject();
             JSONObject daySevenObject = new JSONObject();
             try {
-                Log.i("CompleteLevelsTag","city json object is" + city.getJsonObject().toString());
                 mainObject = city.getJsonObject();
                 JSONObject dailyObject = (JSONObject) mainObject.get("daily");
                 JSONArray daysData = dailyObject.getJSONArray("data");
@@ -202,6 +203,12 @@ public class WeatherActivity extends AppCompatActivity {
                 dayFiveObject = (JSONObject) daysData.get(5);
                 daySixObject = (JSONObject) daysData.get(6);
                 daySevenObject = (JSONObject) daysData.get(7);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                cityName.setText(mainObject.getString("cityName"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -425,7 +432,6 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void sendWeatherRequest(double longitude, double latitude){
         String url =  "https://api.darksky.net/forecast/5f86acbe11d543e188d49a03d14eb478/{longitude},{latitude}";
-        final JSONObject jsonObject = new JSONObject();
 
         Log.i("CompleteLevelsTag","weather request sends");
         url = url.replace("{longitude}", Double.toString(longitude));
@@ -433,19 +439,53 @@ public class WeatherActivity extends AppCompatActivity {
 
         if(!NetworkManager.isNetworkAvailable(this)){
             new CustomToast().toast(WeatherActivity.this, "You are offline");
+
+            String stringFromFile = new String();
+            try {
+                stringFromFile = new StorageManager().readFromMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                        "weather.json");
+            } catch (IOException e) {
+                e.printStackTrace();
+                new CustomToast().toast(WeatherActivity.this, "No data. connect to internet and try again");
+                Log.i("CompleteLevelsTag","No internet. file can not loaded from memory");
+                return;
+            }
+
+            JSONObject jsonFromFile = new JSONObject();
+            try {
+                jsonFromFile = new JSONObject(stringFromFile);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            City.getInstance().setJsonObject(jsonFromFile);
+            new CustomToast().toast(WeatherActivity.this, "Previous data loaded");
+
+            Log.i("CompleteLevelsTag","No internet. file loaded from memory");
+
+            Message msg = sendWeatherRequestHandler.obtainMessage();
+            Bundle bundle = new Bundle();
+            bundle.putString(doneMessageKey, doneMessageValue);
+            msg.setData(bundle);
+            sendWeatherRequestHandler.sendMessage(msg);
+
+            Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
+
         }
         else {
             networkManager.sendRequest(url, new ResponseListener() {
                 @Override
                 public void onResult(JSONObject response) {
+                    try {
+                        response.put("cityName", City.getInstance().getCityName());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
                             "weather.json",
                             response);
 
                     Log.i("CompleteLevelsTag","weather file saved and city json object set response = " + response.toString());
                     City.getInstance().setJsonObject(response);
-
-
 
                     Message msg = sendWeatherRequestHandler.obtainMessage();
                     Bundle bundle = new Bundle();

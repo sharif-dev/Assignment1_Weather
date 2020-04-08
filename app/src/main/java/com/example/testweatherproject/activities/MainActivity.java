@@ -48,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
 
-
-        //test
-
-
         if(!NetworkManager.isNetworkAvailable(this)){
-            new CustomToast().toast(MainActivity.this, "You are offline");
+//            new CustomToast().toast(MainActivity.this, "You are offline");
+            startActivity(new Intent(MainActivity.this, WeatherActivity.class));
         }
         else {
             new CustomToast().toast(MainActivity.this, "Network is available");
