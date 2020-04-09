@@ -2,15 +2,20 @@ package com.example.testweatherproject.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -39,6 +44,9 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    private String doneMessageKey = "Loading completed key";
+    private String doneMessageValue = "Loading completed";
+
     private AutoCompleteTextView locationInput_tv;
     private NetworkManager networkManager;
     ListView listView;
@@ -46,12 +54,16 @@ public class MainActivity extends AppCompatActivity {
     List<Double> longitudes = new ArrayList<>();
     List<Double> latitudes = new ArrayList<>();
     ArrayAdapter adapter;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+
+        progressBar = findViewById(R.id.city_list_progress_bar);
+        progressBar.setVisibility(View.INVISIBLE);
 
         networkManager = NetworkManager.getInstance(this);
         locationInput_tv = findViewById(R.id.locationInput_tv);
@@ -67,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 moveToSecondActivity("onlineMode", position);
             }
         });
+
 
 
         if (!NetworkManager.isNetworkAvailable(this)) {
@@ -88,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void afterTextChanged(final Editable s) {
+                    progressBar.setVisibility(View.VISIBLE);
                     if (!s.toString().equals("")) {
                         timer.cancel();
                         timer = new Timer();
@@ -102,6 +116,16 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+    @SuppressLint("HandlerLeak")
+    private final Handler sendCityListRequestHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            String string = bundle.getString(doneMessageKey);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    };
 
     private void makeAToast(String msg) {
         new CustomToast().toast(this, msg);
@@ -155,6 +179,13 @@ public class MainActivity extends AppCompatActivity {
                                 locations.clear();
                                 locations.addAll(locationArr);
                                 adapter.notifyDataSetChanged();
+
+
+                                Message msg = sendCityListRequestHandler.obtainMessage();
+                                Bundle bundle = new Bundle();
+                                bundle.putString(doneMessageKey, doneMessageValue);
+                                msg.setData(bundle);
+                                sendCityListRequestHandler.sendMessage(msg);
                             }
                         });
                     } catch (JSONException e) {

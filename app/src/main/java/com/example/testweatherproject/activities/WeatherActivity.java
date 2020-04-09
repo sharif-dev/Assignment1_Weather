@@ -436,56 +436,42 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void sendWeatherRequest(double longitude, double latitude){
-        String url =  "https://api.darksky.net/forecast/5f86acbe11d543e188d49a03d14eb478/{longitude},{latitude}";
+        String tempUrl =  "https://api.darksky.net/forecast/5f86acbe11d543e188d49a03d14eb478/{longitude},{latitude}";
 
         Log.i("CompleteLevelsTag","weather request sends");
-        url = url.replace("{longitude}", Double.toString(longitude));
-        url = url.replace("{latitude}", Double.toString(latitude));
+        tempUrl = tempUrl.replace("{longitude}", Double.toString(longitude));
+        tempUrl = tempUrl.replace("{latitude}", Double.toString(latitude));
 
-        if(!NetworkManager.isNetworkAvailable(this)){
-            new CustomToast().toast(WeatherActivity.this, "You are offline");
+        final String url = tempUrl;
 
-            String stringFromFile = new String();
-            try {
-                stringFromFile = new StorageManager().readFromMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
-                        "weather.json");
-            } catch (IOException e) {
-                e.printStackTrace();
-                new CustomToast().toast(WeatherActivity.this, "No data. connect to internet and try again");
-                Log.i("CompleteLevelsTag","No internet. file can not loaded from memory");
-                return;
-            }
 
-            JSONObject jsonFromFile = new JSONObject();
-            try {
-                jsonFromFile = new JSONObject(stringFromFile);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            City.getInstance().setJsonObject(jsonFromFile);
-            new CustomToast().toast(WeatherActivity.this, "Previous data loaded");
+        Thread receiveData = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(!NetworkManager.isNetworkAvailable(WeatherActivity.this)){
+                    new CustomToast().toast(WeatherActivity.this, "You are offline");
 
-            Log.i("CompleteLevelsTag","No internet. file loaded from memory");
+                    String stringFromFile = new String();
+                    try {
+                        stringFromFile = new StorageManager().readFromMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                                "weather.json");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        new CustomToast().toast(WeatherActivity.this, "No data. connect to internet and try again");
+                        Log.i("CompleteLevelsTag","No internet. file can not loaded from memory");
+                        return;
+                    }
 
-            Message msg = sendWeatherRequestHandler.obtainMessage();
-            Bundle bundle = new Bundle();
-            bundle.putString(doneMessageKey, doneMessageValue);
-            msg.setData(bundle);
-            sendWeatherRequestHandler.sendMessage(msg);
+                    JSONObject jsonFromFile = new JSONObject();
+                    try {
+                        jsonFromFile = new JSONObject(stringFromFile);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    City.getInstance().setJsonObject(jsonFromFile);
+                    new CustomToast().toast(WeatherActivity.this, "Previous data loaded");
 
-            Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
-
-        }
-        else {
-            networkManager.sendRequest(url, new ResponseListener() {
-                @Override
-                public void onResult(JSONObject response) {
-                    new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
-                            "weather.json",
-                            response);
-
-                    Log.i("CompleteLevelsTag","weather file saved and city json object set response = " + response.toString());
-                    City.getInstance().setJsonObject(response);
+                    Log.i("CompleteLevelsTag","No internet. file loaded from memory");
 
                     Message msg = sendWeatherRequestHandler.obtainMessage();
                     Bundle bundle = new Bundle();
@@ -493,29 +479,59 @@ public class WeatherActivity extends AppCompatActivity {
                     msg.setData(bundle);
                     sendWeatherRequestHandler.sendMessage(msg);
 
-//                    dialog.dismiss();
                     Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
 
                 }
-            }, new ErrorListener() {
-                @Override
-                public void onError(VolleyError error) {
-                    if (error instanceof TimeoutError) {
-                        makeAToast("Connection Timed out!");
-                    } else if (error instanceof NetworkError) {
-                        makeAToast("No connection! \n check your connection and try again.");
-                    } else if (error instanceof ServerError) {
-                        makeAToast("Server is not responding.");
-                    } else if (error instanceof AuthFailureError) {
-                        makeAToast("server couldn\'t find the authenticated request.");
-                    } else {
-                        makeAToast("An unknown error occurred! \n try again");
-                    }
+                else {
+                    networkManager.sendRequest(url, new ResponseListener() {
+                        @Override
+                        public void onResult(JSONObject response) {
+                            new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                                    "weather.json",
+                                    response);
+
+                            try {
+                                response.put("cityName", City.getInstance().getCityName());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Log.i("CompleteLevelsTag","weather file saved and city json object set response = " + response.toString());
+                            City.getInstance().setJsonObject(response);
+
+                            Message msg = sendWeatherRequestHandler.obtainMessage();
+                            Bundle bundle = new Bundle();
+                            bundle.putString(doneMessageKey, doneMessageValue);
+                            msg.setData(bundle);
+                            sendWeatherRequestHandler.sendMessage(msg);
+
+//                    dialog.dismiss();
+                            Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
+
+                        }
+                    }, new ErrorListener() {
+                        @Override
+                        public void onError(VolleyError error) {
+                            if (error instanceof TimeoutError) {
+                                makeAToast("Connection Timed out!");
+                            } else if (error instanceof NetworkError) {
+                                makeAToast("No connection! \n check your connection and try again.");
+                            } else if (error instanceof ServerError) {
+                                makeAToast("Server is not responding.");
+                            } else if (error instanceof AuthFailureError) {
+                                makeAToast("server couldn\'t find the authenticated request.");
+                            } else {
+                                makeAToast("An unknown error occurred! \n try again");
+                            }
+                        }
+                    });
+
+
                 }
-            });
 
-
-        }
+            }
+        });
+        receiveData.start();
     }
 
     private void makeAToast(String msg){
