@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestWeatherProject</string>
+    <string name="app_name">Weather forecast</string>
     <string name="sunday">Sun</string>
     <string name="monday">Mon</string>
     <string name="tuesday">Tue</string>

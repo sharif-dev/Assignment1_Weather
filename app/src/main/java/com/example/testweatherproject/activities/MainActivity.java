@@ -195,17 +195,19 @@ public class MainActivity extends AppCompatActivity {
             }, new ErrorListener() {
                 @Override
                 public void onError(VolleyError error) {
+                    progressBar.setVisibility(View.INVISIBLE);
                     if (error instanceof TimeoutError){
                         makeAToast("Connection Timed out!");
                     }
                     else if (error instanceof NetworkError) {
                         makeAToast("No connection! \n check your connection and try again.");
+                        moveToSecondActivity("offlineMode", 0);
                     }
                     else if (error instanceof AuthFailureError){
                         makeAToast("server couldn\'t find the authenticated request.");
                     }
                     else {
-                        makeAToast("An unknown error occurred! \n try again");
+//                        makeAToast("An unknown error occurred! \n try again");
                     }
                 }
             });
