@@ -480,6 +480,12 @@ public class WeatherActivity extends AppCompatActivity {
             networkManager.sendRequest(url, new ResponseListener() {
                 @Override
                 public void onResult(JSONObject response) {
+                    try {
+                        response.put("cityName", City.getInstance().getCityName());
+                    }
+                    catch (JSONException e){
+                        e.printStackTrace();
+                    }
                     new StorageManager().writeOnMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
                             "weather.json",
                             response);
