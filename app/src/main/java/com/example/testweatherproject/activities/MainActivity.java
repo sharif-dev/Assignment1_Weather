@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                     else if (error instanceof NetworkError) {
                         makeAToast("No connection! \n check your connection and try again.");
                     }
+                    else if (error instanceof ServerError){
+                    }
                     else if (error instanceof AuthFailureError){
                         makeAToast("server couldn\'t find the authenticated request.");
                     }
