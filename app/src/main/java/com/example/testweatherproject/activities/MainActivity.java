@@ -3,34 +3,52 @@ package com.example.testweatherproject.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.IpSecManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.example.testweatherproject.classes.City;
 import com.example.testweatherproject.classes.CustomToast;
 import com.example.testweatherproject.interfaces.ErrorListener;
 import com.example.testweatherproject.classes.NetworkManager;
 import com.example.testweatherproject.R;
 import com.example.testweatherproject.interfaces.ResponseListener;
-import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private TextInputLayout textInputCity;
+    private static final String TAG = "MainActivity";
+
+    private AutoCompleteTextView locationInput_tv;
     private NetworkManager networkManager;
     ListView listView;
-    List<String> cityArray = new ArrayList<String>();
+    List<String> locations = new ArrayList<>();
+    List<Double> longitudes = new ArrayList<>();
+    List<Double> latitudes = new ArrayList<>();
     ArrayAdapter adapter;
+
+    TextView test_tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,107 +57,131 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         networkManager = NetworkManager.getInstance(this);
-        textInputCity = findViewById(R.id.city_text);
-        Button btn = findViewById(R.id.temp_btn);
-        listView = findViewById(R.id.city_list);
+        locationInput_tv = findViewById(R.id.locationInput_tv);
 
-        adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_listview, cityArray);
+        listView = findViewById(R.id.city_list);
+        adapter = new ArrayAdapter<>(this,
+                R.layout.activity_listview, locations);
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                moveToSecondActivity("onlineMode", position);
+            }
+        });
 
 
-        //test
+        if (!NetworkManager.isNetworkAvailable(this)) {
+            makeAToast("You are offline \n Showing the last available data \n Please wait...");
+            moveToSecondActivity("offlineMode", 0);
+        } else {
+            locationInput_tv.addTextChangedListener(new TextWatcher() {
+                private Timer timer = new Timer();
 
-
-        if(!NetworkManager.isNetworkAvailable(this)){
-            new CustomToast().toast(MainActivity.this, "You are offline");
-        }
-        else {
-            new CustomToast().toast(MainActivity.this, "Network is available");
-            btn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    cityArray.clear();
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    City city = City.getInstance();
-                    city.setCityName("Isfahan");
-                    city.setLongitude(51.5074);
-                    city.setLatitude(0.1278);
+                }
 
-                    if (validateCity()) {
-                        startActivity(new Intent(MainActivity.this, WeatherActivity.class));
-                        sendCityListRequest(textInputCity.getEditText().getText().toString().trim());
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(final Editable s) {
+                    if (!s.toString().equals("")) {
+                        timer.cancel();
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                new Thread(new SendGeoCodingRequest(s.toString())).start();
+                            }
+                        }, 300);
                     }
                 }
             });
         }
     }
 
-
-
-
-
-
-
-
-
-    private boolean validateCity(){
-        String cityName = textInputCity.getEditText().getText().toString().trim();
-
-        if (cityName.isEmpty()){
-            textInputCity.setError("Field can't be empty");
-            return false;
-        }
-        else if (cityName.equals("Isfahan")){
-            textInputCity.setError("Isfahan is very big!!!");
-            // TODO: 3/18/20 Check city name validate
-            return false;
-        }
-        else {
-            textInputCity.setError(null);
-            return true;
-        }
-
+    private void makeAToast(String msg) {
+        new CustomToast().toast(this, msg);
     }
 
-    private void sendCityListRequest(String cityName){
+    private void moveToSecondActivity(String mode, int position){
+        Intent intent = new Intent(MainActivity.this, WeatherActivity.class);
+        if (mode.equals("onlineMode")){
+            City.getInstance().setCityName(locations.get(position));
+            City.getInstance().setLatitude(latitudes.get(position));
+            City.getInstance().setLongitude(longitudes.get(position));
+        }
+        else if (mode.equals("offlineMode")){
+
+        }
+        startActivity(intent);
+    }
+
+    class SendGeoCodingRequest implements Runnable {
         final String accessToken = "access_token=pk.eyJ1Ijoic2VjdGlvbjE5OTEiLCJhIjoiY2s4MWRpNWoyMG9mZDNkcnVrYnc5cWI4OCJ9.1GiZajLOALly-iYcGgKaUQ";
-        String url =  "https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?" + accessToken;
-        url = url.replace("{query}", cityName);
+        String url = "https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?" + accessToken;
 
+        SendGeoCodingRequest(String location) {
+            url = url.replace("{query}", location);
+        }
 
-        networkManager.sendRequest(url, new ResponseListener() {
-            @Override
-            public void onResult(JSONObject response) {
-                try {
-                    JSONArray features = response.getJSONArray("features");
+        @Override
+        public void run() {
+            networkManager.sendRequest(url, new ResponseListener() {
+                @Override
+                public void onResult(JSONObject response) {
+                    longitudes.clear();
+                    latitudes.clear();
+                    try {
+                        final List<String> locationArr = new ArrayList<>();
+                        JSONArray features = response.getJSONArray("features");
+                        for (int i = 0; i < features.length(); i++) {
+                            JSONObject city = features.getJSONObject(i);
+                            String text = city.getString("text");
+                            String place_name = city.getString("place_name");
+                            double longitude = city.getJSONArray("center").getDouble(0);
+                            double latitude = city.getJSONArray("center").getDouble(1);
 
-                    if (features.length() == 0){
-                        textInputCity.setError("No such city");
+                            locationArr.add(text);
+                            longitudes.add(longitude);
+                            latitudes.add(latitude);
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                locations.clear();
+                                locations.addAll(locationArr);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    for (int i = 0; i < features.length(); i++){
-                        JSONObject city = features.getJSONObject(i);
-                        String name = city.getString("place_name");
-                        double longitude = city.getJSONArray("center").getDouble(0);
-                        double latitude = city.getJSONArray("center").getDouble(1);
-
-                        cityArray.add(name);
-//                        cityArray.add(name + ":\n" + longitude + ", " + latitude);
-
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        }, new ErrorListener() {
-            @Override
-            public void onError() {
-                new CustomToast().toast(MainActivity.this, "City list download gets error");
-            }
-        });
+            }, new ErrorListener() {
+                @Override
+                public void onError(VolleyError error) {
+                    if (error instanceof TimeoutError){
+                        makeAToast("Connection Timed out!");
+                    }
+                    else if (error instanceof NetworkError) {
+                        makeAToast("No connection! \n check your connection and try again.");
+                    }
+                    else if (error instanceof AuthFailureError){
+                        makeAToast("server couldn\'t find the authenticated request.");
+                    }
+                    else {
+                        makeAToast("An unknown error occurred! \n try again");
+                    }
+                }
+            });
+        }
     }
 
 

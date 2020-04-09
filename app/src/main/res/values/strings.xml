@@ -7,4 +7,6 @@
     <string name="thursday">Thu</string>
     <string name="friday">Fri</string>
     <string name="saturday">Sat</string>
+    
+    <string name="location_input">Enter Location</string>
 </resources>

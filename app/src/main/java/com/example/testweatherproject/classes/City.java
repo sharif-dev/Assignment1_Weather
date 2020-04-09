@@ -5,7 +5,7 @@ import org.json.JSONObject;
 public class City {
     private static City instance = null;
     private String cityName;
-    private Double longitude;
+    private double longitude;
     private double latitude;
     private JSONObject jsonObject;
 
