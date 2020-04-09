@@ -12,6 +12,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 public class WeatherActivity extends AppCompatActivity {
@@ -102,6 +104,7 @@ public class WeatherActivity extends AppCompatActivity {
         dialog = builder.create();
         dialog.show();
 
+
         cityName = findViewById(R.id.city_name);
 
         dayOneText = findViewById(R.id.day_one_text);
@@ -160,7 +163,7 @@ public class WeatherActivity extends AppCompatActivity {
         city.setLongitude(new Double(0));
         city.setLatitude(new Double(0));
 
-        Log.i("CompleteLevelsTag", "city object nulled in on destroy");
+        Log.i("CompleteLevelsTag","city object nulled in on destroy");
 
     }
 
@@ -173,7 +176,7 @@ public class WeatherActivity extends AppCompatActivity {
         city.setLongitude(new Double(0));
         city.setLatitude(new Double(0));
 
-        Log.i("CompleteLevelsTag", "city object nulled in on stop");
+        Log.i("CompleteLevelsTag","city object nulled in on stop");
     }
 
     private Thread setComponents = new Thread(new Runnable() {
@@ -183,165 +186,172 @@ public class WeatherActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    City city = City.getInstance();
-                    cityName.setText(city.getCityName());
+            City city = City.getInstance();
 
-                    JSONObject mainObject;
-                    JSONObject dayOneObject = new JSONObject();
-                    JSONObject dayTwoObject = new JSONObject();
-                    JSONObject dayThreeObject = new JSONObject();
-                    JSONObject dayFourObject = new JSONObject();
-                    JSONObject dayFiveObject = new JSONObject();
-                    JSONObject daySixObject = new JSONObject();
-                    JSONObject daySevenObject = new JSONObject();
-                    try {
-                        Log.i("CompleteLevelsTag", "city json object is" + city.getJsonObject().toString());
-                        mainObject = city.getJsonObject();
-                        JSONObject dailyObject = (JSONObject) mainObject.get("daily");
-                        JSONArray daysData = dailyObject.getJSONArray("data");
+            JSONObject mainObject = new JSONObject();
+            JSONObject dayOneObject = new JSONObject();
+            JSONObject dayTwoObject = new JSONObject();
+            JSONObject dayThreeObject = new JSONObject();
+            JSONObject dayFourObject = new JSONObject();
+            JSONObject dayFiveObject = new JSONObject();
+            JSONObject daySixObject = new JSONObject();
+            JSONObject daySevenObject = new JSONObject();
+            try {
+                mainObject = city.getJsonObject();
+                JSONObject dailyObject = (JSONObject) mainObject.get("daily");
+                JSONArray daysData = dailyObject.getJSONArray("data");
 
-                        dayOneObject = (JSONObject) daysData.get(1);
-                        dayTwoObject = (JSONObject) daysData.get(2);
-                        dayThreeObject = (JSONObject) daysData.get(3);
-                        dayFourObject = (JSONObject) daysData.get(4);
-                        dayFiveObject = (JSONObject) daysData.get(5);
-                        daySixObject = (JSONObject) daysData.get(6);
-                        daySevenObject = (JSONObject) daysData.get(7);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                dayOneObject = (JSONObject) daysData.get(1);
+                dayTwoObject = (JSONObject) daysData.get(2);
+                dayThreeObject = (JSONObject) daysData.get(3);
+                dayFourObject = (JSONObject) daysData.get(4);
+                dayFiveObject = (JSONObject) daysData.get(5);
+                daySixObject = (JSONObject) daysData.get(6);
+                daySevenObject = (JSONObject) daysData.get(7);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                cityName.setText(mainObject.getString("cityName"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            int today = calendar.get(Calendar.DAY_OF_WEEK);
+
+            dayOneText.setText(getDayString((today + 1) % 7));
+            dayTwoText.setText(getDayString((today + 2) % 7));
+            dayThreeText.setText(getDayString((today + 3) % 7));
+            dayFourText.setText(getDayString((today + 4) % 7));
+            dayFiveText.setText(getDayString((today + 5) % 7));
+            daySixText.setText(getDayString((today + 6) % 7));
+            daySevenText.setText(getDayString((today + 7) % 7));
+
+
+            try {
+                dayOneHighTemperature.setText(FahrenheitToCelsius(dayOneObject.getInt("temperatureHigh")) + "°");
+                dayOneLowTemperature.setText(FahrenheitToCelsius(dayOneObject.getInt("temperatureLow")) + "°");
+                dayOneIcon.setImageDrawable(getDrawable(dayOneObject.getString("icon")));
+                final JSONObject finalDayOneObject = dayOneObject;
+                dayOneDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDayOneObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-
-                    Calendar calendar = Calendar.getInstance();
-                    int today = calendar.get(Calendar.DAY_OF_WEEK);
-
-                    dayOneText.setText(getDayString((today + 1) % 7));
-                    dayTwoText.setText(getDayString((today + 2) % 7));
-                    dayThreeText.setText(getDayString((today + 3) % 7));
-                    dayFourText.setText(getDayString((today + 4) % 7));
-                    dayFiveText.setText(getDayString((today + 5) % 7));
-                    daySixText.setText(getDayString((today + 6) % 7));
-                    daySevenText.setText(getDayString((today + 7) % 7));
+                });
 
 
-                    try {
-                        dayOneHighTemperature.setText(FahrenheitToCelsius(dayOneObject.getInt("temperatureHigh")) + "°");
-                        dayOneLowTemperature.setText(FahrenheitToCelsius(dayOneObject.getInt("temperatureLow")) + "°");
-                        dayOneIcon.setImageDrawable(getDrawable(dayOneObject.getString("icon")));
-                        final JSONObject finalDayOneObject = dayOneObject;
-                        dayOneDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDayOneObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        dayTwoHighTemperature.setText(FahrenheitToCelsius(dayTwoObject.getInt("temperatureHigh")) + "°");
-                        dayTwoLowTemperature.setText(FahrenheitToCelsius(dayTwoObject.getInt("temperatureLow")) + "°");
-                        dayTwoIcon.setImageDrawable(getDrawable(dayTwoObject.getString("icon")));
-                        final JSONObject finalDayTwoObject = dayTwoObject;
-                        dayTwoDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDayTwoObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        dayThreeHighTemperature.setText(FahrenheitToCelsius(dayThreeObject.getInt("temperatureHigh")) + "°");
-                        dayThreeLowTemperature.setText(FahrenheitToCelsius(dayThreeObject.getInt("temperatureLow")) + "°");
-                        dayThreeIcon.setImageDrawable(getDrawable(dayThreeObject.getString("icon")));
-                        final JSONObject finalDayThreeObject = dayThreeObject;
-                        dayThreeDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDayThreeObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        dayFourHighTemperature.setText(FahrenheitToCelsius(dayFourObject.getInt("temperatureHigh")) + "°");
-                        dayFourLowTemperature.setText(FahrenheitToCelsius(dayFourObject.getInt("temperatureLow")) + "°");
-                        dayFourIcon.setImageDrawable(getDrawable(dayFourObject.getString("icon")));
-                        final JSONObject finalDayFourObject = dayFourObject;
-                        dayFourDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDayFourObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        dayFiveHighTemperature.setText(FahrenheitToCelsius(dayFiveObject.getInt("temperatureHigh")) + "°");
-                        dayFiveLowTemperature.setText(FahrenheitToCelsius(dayFiveObject.getInt("temperatureLow")) + "°");
-                        dayFiveIcon.setImageDrawable(getDrawable(dayFiveObject.getString("icon")));
-                        final JSONObject finalDayFiveObject = dayFiveObject;
-                        dayFiveDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDayFiveObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        daySixHighTemperature.setText(FahrenheitToCelsius(daySixObject.getInt("temperatureHigh")) + "°");
-                        daySixLowTemperature.setText(FahrenheitToCelsius(daySixObject.getInt("temperatureLow")) + "°");
-                        daySixIcon.setImageDrawable(getDrawable(daySixObject.getString("icon")));
-                        final JSONObject finalDaySixObject = daySixObject;
-                        daySixDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDaySixObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                        daySevenHighTemperature.setText(FahrenheitToCelsius(daySevenObject.getInt("temperatureHigh")) + "°");
-                        daySevenLowTemperature.setText(FahrenheitToCelsius(daySevenObject.getInt("temperatureLow")) + "°");
-                        daySevenIcon.setImageDrawable(getDrawable(daySevenObject.getString("icon")));
-                        final JSONObject finalDaySevenObject = daySevenObject;
-                        daySevenDetails.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    new CustomToast().toast(WeatherActivity.this, finalDaySevenObject.getString("summary"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                dayTwoHighTemperature.setText(FahrenheitToCelsius(dayTwoObject.getInt("temperatureHigh")) + "°");
+                dayTwoLowTemperature.setText(FahrenheitToCelsius(dayTwoObject.getInt("temperatureLow")) + "°");
+                dayTwoIcon.setImageDrawable(getDrawable(dayTwoObject.getString("icon")));
+                final JSONObject finalDayTwoObject = dayTwoObject;
+                dayTwoDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDayTwoObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                });
+
+
+                dayThreeHighTemperature.setText(FahrenheitToCelsius(dayThreeObject.getInt("temperatureHigh")) + "°");
+                dayThreeLowTemperature.setText(FahrenheitToCelsius(dayThreeObject.getInt("temperatureLow")) + "°");
+                dayThreeIcon.setImageDrawable(getDrawable(dayThreeObject.getString("icon")));
+                final JSONObject finalDayThreeObject = dayThreeObject;
+                dayThreeDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDayThreeObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+                dayFourHighTemperature.setText(FahrenheitToCelsius(dayFourObject.getInt("temperatureHigh")) + "°");
+                dayFourLowTemperature.setText(FahrenheitToCelsius(dayFourObject.getInt("temperatureLow")) + "°");
+                dayFourIcon.setImageDrawable(getDrawable(dayFourObject.getString("icon")));
+                final JSONObject finalDayFourObject = dayFourObject;
+                dayFourDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDayFourObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+                dayFiveHighTemperature.setText(FahrenheitToCelsius(dayFiveObject.getInt("temperatureHigh")) + "°");
+                dayFiveLowTemperature.setText(FahrenheitToCelsius(dayFiveObject.getInt("temperatureLow")) + "°");
+                dayFiveIcon.setImageDrawable(getDrawable(dayFiveObject.getString("icon")));
+                final JSONObject finalDayFiveObject = dayFiveObject;
+                dayFiveDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDayFiveObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+                daySixHighTemperature.setText(FahrenheitToCelsius(daySixObject.getInt("temperatureHigh")) + "°");
+                daySixLowTemperature.setText(FahrenheitToCelsius(daySixObject.getInt("temperatureLow")) + "°");
+                daySixIcon.setImageDrawable(getDrawable(daySixObject.getString("icon")));
+                final JSONObject finalDaySixObject = daySixObject;
+                daySixDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDaySixObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+                daySevenHighTemperature.setText(FahrenheitToCelsius(daySevenObject.getInt("temperatureHigh")) + "°");
+                daySevenLowTemperature.setText(FahrenheitToCelsius(daySevenObject.getInt("temperatureLow")) + "°");
+                daySevenIcon.setImageDrawable(getDrawable(daySevenObject.getString("icon")));
+                final JSONObject finalDaySevenObject = daySevenObject;
+                daySevenDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            new CustomToast().toast(WeatherActivity.this, finalDaySevenObject.getString("summary"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
                 }
             });
 
-            Log.i("CompleteLevelsTag", "components set");
+            Log.i("CompleteLevelsTag","components set");
+
+
+
 
 
             Message msg = setComponentsHandler.obtainMessage();
@@ -350,7 +360,7 @@ public class WeatherActivity extends AppCompatActivity {
             msg.setData(bundle);
             setComponentsHandler.sendMessage(msg);
 
-            Log.i("CompleteLevelsTag", "message sent to setComponentsHandler");
+            Log.i("CompleteLevelsTag","message sent to setComponentsHandler");
 
             //send message
         }
@@ -364,7 +374,7 @@ public class WeatherActivity extends AppCompatActivity {
             Bundle bundle = msg.getData();
             String string = bundle.getString(doneMessageKey);
 //            Toast.makeText(WeatherActivity.this, string, Toast.LENGTH_SHORT).show();
-            Log.i("CompleteLevelsTag", "setComponentHandler dismissed the dialog");
+            Log.i("CompleteLevelsTag","setComponentHandler dismissed the dialog");
             dialog.dismiss();
             //remove loading dialog
         }
@@ -378,12 +388,12 @@ public class WeatherActivity extends AppCompatActivity {
             Bundle bundle = msg.getData();
             String string = bundle.getString(doneMessageKey);
             setComponents.start();
-            Log.i("CompleteLevelsTag", "set components called");
+            Log.i("CompleteLevelsTag","set components called");
         }
     };
 
 
-    private String getDayString(int i) {
+    private String getDayString(int i){
         if (i == 1)
             return getString(R.string.sunday);
         else if (i == 2)
@@ -401,11 +411,11 @@ public class WeatherActivity extends AppCompatActivity {
         return "wrong number";
     }
 
-    private int FahrenheitToCelsius(int fahrenheit) {
+    private int FahrenheitToCelsius(int fahrenheit){
         return (fahrenheit - 32) * 5 / 9;
     }
 
-    private Drawable getDrawable(String status) {
+    private Drawable getDrawable(String status){
         if (status.equals("clear-day"))
             return getDrawable(R.drawable.clear_day);
         if (status.equals("rain"))
@@ -425,17 +435,48 @@ public class WeatherActivity extends AppCompatActivity {
         return getDrawable(R.drawable.clear_day);
     }
 
-    private void sendWeatherRequest(double longitude, double latitude) {
-        String url = "https://api.darksky.net/forecast/5f86acbe11d543e188d49a03d14eb478/{longitude},{latitude}";
-        final JSONObject jsonObject = new JSONObject();
+    private void sendWeatherRequest(double longitude, double latitude){
+        String url =  "https://api.darksky.net/forecast/5f86acbe11d543e188d49a03d14eb478/{longitude},{latitude}";
 
-        Log.i("CompleteLevelsTag", "weather request sends");
+        Log.i("CompleteLevelsTag","weather request sends");
         url = url.replace("{longitude}", Double.toString(longitude));
         url = url.replace("{latitude}", Double.toString(latitude));
 
-        if (!NetworkManager.isNetworkAvailable(this)) {
-//            new CustomToast().toast(WeatherActivity.this, "You are offline");
-        } else {
+        if(!NetworkManager.isNetworkAvailable(this)){
+            new CustomToast().toast(WeatherActivity.this, "You are offline");
+
+            String stringFromFile = new String();
+            try {
+                stringFromFile = new StorageManager().readFromMemory(Environment.getExternalStorageDirectory() + "/" + getString(R.string.app_name),
+                        "weather.json");
+            } catch (IOException e) {
+                e.printStackTrace();
+                new CustomToast().toast(WeatherActivity.this, "No data. connect to internet and try again");
+                Log.i("CompleteLevelsTag","No internet. file can not loaded from memory");
+                return;
+            }
+
+            JSONObject jsonFromFile = new JSONObject();
+            try {
+                jsonFromFile = new JSONObject(stringFromFile);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            City.getInstance().setJsonObject(jsonFromFile);
+            new CustomToast().toast(WeatherActivity.this, "Previous data loaded");
+
+            Log.i("CompleteLevelsTag","No internet. file loaded from memory");
+
+            Message msg = sendWeatherRequestHandler.obtainMessage();
+            Bundle bundle = new Bundle();
+            bundle.putString(doneMessageKey, doneMessageValue);
+            msg.setData(bundle);
+            sendWeatherRequestHandler.sendMessage(msg);
+
+            Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
+
+        }
+        else {
             networkManager.sendRequest(url, new ResponseListener() {
                 @Override
                 public void onResult(JSONObject response) {
@@ -443,9 +484,8 @@ public class WeatherActivity extends AppCompatActivity {
                             "weather.json",
                             response);
 
-                    Log.i("CompleteLevelsTag", "weather file saved and city json object set response = " + response.toString());
+                    Log.i("CompleteLevelsTag","weather file saved and city json object set response = " + response.toString());
                     City.getInstance().setJsonObject(response);
-
 
                     Message msg = sendWeatherRequestHandler.obtainMessage();
                     Bundle bundle = new Bundle();
@@ -454,7 +494,7 @@ public class WeatherActivity extends AppCompatActivity {
                     sendWeatherRequestHandler.sendMessage(msg);
 
 //                    dialog.dismiss();
-                    Log.i("CompleteLevelsTag", "message sent to sendWeatherHandler");
+                    Log.i("CompleteLevelsTag","message sent to sendWeatherHandler");
 
                 }
             }, new ErrorListener() {
@@ -473,6 +513,7 @@ public class WeatherActivity extends AppCompatActivity {
                     }
                 }
             });
+
 
         }
     }

@@ -28,7 +28,7 @@
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="City"
+            android:text="@string/na"
             android:textSize="40sp"
             android:textColor="@color/lightTheme">
         </TextView>
@@ -54,7 +54,7 @@
                 android:id="@+id/day_one_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -104,7 +104,7 @@
                         android:id="@+id/day_one_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -147,7 +147,7 @@
                         android:id="@+id/day_one_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -217,7 +217,7 @@
                 android:id="@+id/day_two_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -267,7 +267,7 @@
                         android:id="@+id/day_two_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -310,7 +310,7 @@
                         android:id="@+id/day_two_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -380,7 +380,7 @@
                 android:id="@+id/day_three_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -430,7 +430,7 @@
                         android:id="@+id/day_three_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -473,7 +473,7 @@
                         android:id="@+id/day_three_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -543,7 +543,7 @@
                 android:id="@+id/day_four_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -593,7 +593,7 @@
                         android:id="@+id/day_four_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -636,7 +636,7 @@
                         android:id="@+id/day_four_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -706,7 +706,7 @@
                 android:id="@+id/day_five_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -756,7 +756,7 @@
                         android:id="@+id/day_five_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -799,7 +799,7 @@
                         android:id="@+id/day_five_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -869,7 +869,7 @@
                 android:id="@+id/day_six_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -919,7 +919,7 @@
                         android:id="@+id/day_six_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -962,7 +962,7 @@
                         android:id="@+id/day_six_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -1032,7 +1032,7 @@
                 android:id="@+id/day_seven_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sunday"
+                android:text="@string/na"
                 android:textSize="15sp">
 
             </TextView>
@@ -1082,7 +1082,7 @@
                         android:id="@+id/day_seven_high_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 
@@ -1125,7 +1125,7 @@
                         android:id="@+id/day_seven_low_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15°"
+                        android:text="@string/na"
                         android:textSize="15sp"
                         >
 

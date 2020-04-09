@@ -3,7 +3,6 @@ package com.example.testweatherproject.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.IpSecManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -26,12 +25,12 @@ import com.example.testweatherproject.interfaces.ErrorListener;
 import com.example.testweatherproject.classes.NetworkManager;
 import com.example.testweatherproject.R;
 import com.example.testweatherproject.interfaces.ResponseListener;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -47,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
     List<Double> longitudes = new ArrayList<>();
     List<Double> latitudes = new ArrayList<>();
     ArrayAdapter adapter;
-
-    TextView test_tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
